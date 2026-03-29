@@ -108,8 +108,38 @@ async def send_task(params: dict, rpc_id=None):
         config["max_risk_discuss_rounds"] = 1
 
         ta = TradingAgentsGraph(debug=False, config=config)
-        _, decision = ta.propagate(ticker, today)
-        response_text = f"**TradingAgents Analysis for {ticker} ({today})**\n\n{decision}"
+        final_state, decision = ta.propagate(ticker, today)
+
+        # Build comprehensive response with analyst reports, debate, and decision
+        sections = [f"**TradingAgents Analysis for {ticker} ({today})**"]
+
+        # Analyst reports
+        for report_key, label in [
+            ("market_report", "📈 Market/Technical Analysis"),
+            ("sentiment_report", "💬 Sentiment Analysis"),
+            ("news_report", "📰 News Analysis"),
+            ("fundamentals_report", "📊 Fundamentals Analysis"),
+        ]:
+            report = final_state.get(report_key, "")
+            if report:
+                sections.append(f"\n## {label}\n{report}")
+
+        # Investment debate (researcher bull vs bear)
+        debate = final_state.get("investment_debate_state", {})
+        judge = debate.get("judge_decision", "")
+        if judge:
+            sections.append(f"\n## ⚖️ Investment Debate\n{judge}")
+
+        # Risk assessment debate
+        risk = final_state.get("risk_debate_state", {})
+        risk_judge = risk.get("judge_decision", "")
+        if risk_judge:
+            sections.append(f"\n## 🛡️ Risk Assessment\n{risk_judge}")
+
+        # Final recommendation
+        sections.append(f"\n## 🎯 Final Recommendation\n{decision}")
+
+        response_text = "\n".join(sections)
     except Exception as e:
         response_text = f"TradingAgents analysis error for {ticker}: {str(e)}\n{traceback.format_exc()}"
 
