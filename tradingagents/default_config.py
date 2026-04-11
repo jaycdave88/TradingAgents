@@ -7,11 +7,11 @@ DEFAULT_CONFIG = {
         os.path.abspath(os.path.join(os.path.dirname(__file__), ".")),
         "dataflows/data_cache",
     ),
-    # LLM settings
-    "llm_provider": "openai",
-    "deep_think_llm": "gpt-5.2",
-    "quick_think_llm": "gpt-5-mini",
-    "backend_url": "https://api.openai.com/v1",
+    # LLM settings — configured for local Ollama
+    "llm_provider": "ollama",
+    "deep_think_llm": "gpt-oss:120b",
+    "quick_think_llm": "qwen3.5:9b",
+    "backend_url": "http://localhost:11434/v1",
     # Provider-specific thinking configuration
     "google_thinking_level": None,      # "high", "minimal", etc.
     "openai_reasoning_effort": None,    # "medium", "high", "low"
